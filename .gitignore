@@ -3,5 +3,6 @@
 /__pycache__
 /venv
 /activate.bat
+/activate.ps1
 /build
 /dist

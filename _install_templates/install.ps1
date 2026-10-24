@@ -411,9 +411,25 @@ try {
     if (-not (Test-Path -LiteralPath $venvPython)) { throw "Virtual environment Python not found: $venvPython" }
 
     # activate.bat in the repository root (hard link, symlinks need privileges).
-    $activateLink = Join-Path $REPO_ROOT 'activate.bat'
-    if (Test-Path -LiteralPath $activateLink) { Remove-Item -LiteralPath $activateLink -Force }
-    New-Item -ItemType HardLink -Path $activateLink -Target (Join-Path $venvPath 'Scripts\activate.bat') | Out-Null
+    # activate.bat stores the venv path itself, so a link works.
+    $activateBat = Join-Path $REPO_ROOT 'activate.bat'
+    if (Get-Item -LiteralPath $activateBat -Force -ErrorAction SilentlyContinue) {
+        Remove-Item -LiteralPath $activateBat -Force
+    }
+    New-Item -ItemType HardLink -Path $activateBat -Target (Join-Path $venvPath 'Scripts\activate.bat') | Out-Null
+
+    # activate.ps1 in the repository root. A link cannot be used here:
+    # Activate.ps1 derives the venv from its own location, so a link in the
+    # repository root would look for the venv one level above the repository.
+    # Use a small wrapper that dot-sources the real script instead.
+    $activatePs1 = Join-Path $REPO_ROOT 'activate.ps1'
+    if (Get-Item -LiteralPath $activatePs1 -Force -ErrorAction SilentlyContinue) {
+        Remove-Item -LiteralPath $activatePs1 -Force
+    }
+    Set-Content -LiteralPath $activatePs1 -Encoding utf8 -Value @(
+        '# Activates the virtual environment created by install.ps1.',
+        ". (Join-Path `$PSScriptRoot '$VENV_DIR\Scripts\Activate.ps1')"
+    )
 
     # --- Packages ---
     Copy-PipConfig -VenvPath $venvPath
@@ -436,7 +452,7 @@ Write-Host "$APP_NAME installation complete." -ForegroundColor Green
 Write-Host ''
 Write-Host "Activate $APP_NAME's Python virtual environment with:"
 Write-Host "  cmd        : activate"
-Write-Host "  PowerShell : .\$VENV_DIR\Scripts\Activate.ps1"
+Write-Host "  PowerShell : .\activate.ps1"
 Write-Host "and run 'deactivate' to leave it."
 Write-Host ''
 Write-Host '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
