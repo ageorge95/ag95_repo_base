@@ -3,6 +3,10 @@
 Base skeleton for my Python GUI repositories. It contains the common files I
 copy into a new project, plus the generic install/update scripts.
 
+Each text file starts with a `VERSION=` line and the template repository URL.
+Keep these lines when copying files, so you can see which template version was
+used.
+
 ## What is included
 
 | File | Purpose |

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # VERSION=2
+# https://github.com/ageorge95/ag95_repo_base
 #
 # Generic updater: updates the packages of this repository's existing
 # Python virtual environment.
@@ -89,7 +90,7 @@ NO_PAUSE=false
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-pause)  NO_PAUSE=true; shift ;;
-        -h|--help)   sed -n '3,22p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help)   sed -n '4,23p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *)           echo "ERROR: unknown argument '$1' (see --help)" >&2; exit 2 ;;
     esac
 done

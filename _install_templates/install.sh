@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # VERSION=2
+# https://github.com/ageorge95/ag95_repo_base
 #
 # Generic installer: creates a Python virtual environment for this repository
 # and installs its requirements.
@@ -98,7 +99,7 @@ while [ $# -gt 0 ]; do
         --python)    PYTHON_ARG="${2:-}"; shift 2 || { echo "ERROR: --python needs a value" >&2; exit 2; } ;;
         --python=*)  PYTHON_ARG="${1#*=}"; shift ;;
         --no-pause)  NO_PAUSE=true; shift ;;
-        -h|--help)   sed -n '3,25p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help)   sed -n '4,26p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *)           echo "ERROR: unknown argument '$1' (see --help)" >&2; exit 2 ;;
     esac
 done
