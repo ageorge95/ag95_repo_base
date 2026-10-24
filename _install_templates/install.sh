@@ -372,7 +372,8 @@ else
     die "Virtual environment Python not found in $VENV_DIR."
 fi
 
-# activate.sh in the repository root.
+# activate.sh in the repository root (symlink to the venv's activate script).
+# The activate script stores the venv path itself, so sourcing the symlink works.
 rm -f activate.sh
 ln -s "$VENV_BIN/activate" activate.sh 2>/dev/null || cp "$VENV_BIN/activate" activate.sh
 
