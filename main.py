@@ -1,3 +1,4 @@
+import ctypes
 import os
 import sys
 
@@ -11,6 +12,7 @@ from PySide6.QtWidgets import (QApplication,
                                QWidget)
 
 APP_NAME = 'Python GUI Base'
+APP_ID = 'AG95.PythonGUIBase'  # Windows taskbar identity; rename for a new project
 ICON_FILE = 'icon.ico'
 VERSION_FILE = 'version.txt'
 
@@ -19,6 +21,21 @@ def get_running_path(relative_path):
     """Return a bundled file's path in both source and PyInstaller builds."""
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
+
+
+def set_windows_app_id():
+    """Give the app its own Windows taskbar identity.
+
+    When run as python.exe, Windows groups the window under Python's taskbar
+    entry and uses Python's icon. An explicit AppUserModelID makes the taskbar
+    use the window icon instead, matching the compiled executable.
+    """
+    if sys.platform != 'win32':
+        return
+    try:
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_ID)
+    except (AttributeError, OSError):
+        pass
 
 
 def read_version():
@@ -64,6 +81,7 @@ class MainWindow(QMainWindow):
 
 
 def main():
+    set_windows_app_id()
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(get_running_path(ICON_FILE)))
 

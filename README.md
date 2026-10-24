@@ -22,7 +22,7 @@ Package indexes used by the install/update scripts are configured in
 ## Using this repo as a starting point
 
 1. Create a new repository from this one (or copy the files).
-2. Rename the app in `main.py` (`APP_NAME`) and, if needed, in `main.spec`.
+2. Rename the app in `main.py` (`APP_NAME` and `APP_ID`) and, if needed, in `main.spec`.
 3. Install the environment:
    - Windows: `powershell -ExecutionPolicy Bypass -File _install_templates\install.ps1`
    - Linux/macOS: `./_install_templates/install.sh`
