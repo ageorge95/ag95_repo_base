@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# VERSION=1
+# VERSION=2
 #
 # Generic updater: updates the packages of this repository's existing
 # Python virtual environment.
 #
-# Copy this file next to install.sh (repository root or an '_install'
-# folder inside it) and keep the CONFIGURATION section in sync with install.sh.
+# Copy this file next to install.sh (repository root or an '_install' or
+# '_install_templates' folder inside it) and keep the CONFIGURATION section in
+# sync with install.sh.
 #
 # Steps:
 #   1. Optionally update Git submodules.
@@ -25,13 +26,13 @@ set -eo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# The scripts can live in the repository root or in an '_install' sub-folder.
-# In the latter case the repository root is one level up.
-INSTALL_DIR_NAME="_install"
+# The scripts can live in the repository root or in an '_install' or
+# '_install_templates' sub-folder. In the latter cases the repository root is
+# one level up.
 REPO_ROOT="$SCRIPT_DIR"
-if [ "$(basename "$SCRIPT_DIR" | tr '[:upper:]' '[:lower:]')" = "$INSTALL_DIR_NAME" ]; then
-    REPO_ROOT="$(dirname "$SCRIPT_DIR")"
-fi
+case "$(basename "$SCRIPT_DIR" | tr '[:upper:]' '[:lower:]')" in
+    _install|_install_templates) REPO_ROOT="$(dirname "$SCRIPT_DIR")" ;;
+esac
 cd "$REPO_ROOT"
 
 # ============================================================

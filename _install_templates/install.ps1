@@ -1,4 +1,4 @@
-# VERSION=1
+# VERSION=2
 
 <#
 .SYNOPSIS
@@ -7,8 +7,9 @@
 
 .DESCRIPTION
     Copy this file (together with update.ps1 and pip.ini) into the root of a
-    repository or into an '_install' folder inside it, and adapt the
-    CONFIGURATION section below. Nothing else should need changing.
+    repository or into an '_install' or '_install_templates' folder inside it,
+    and adapt the CONFIGURATION section below. Nothing else should need
+    changing.
 
     Steps:
       1. Find the highest installed Python that is not excluded
@@ -38,11 +39,12 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# The scripts can live in the repository root or in an '_install' sub-folder.
-# In the latter case the repository root is one level up.
-$INSTALL_DIR_NAME = '_install'
+# The scripts can live in the repository root or in an '_install' or
+# '_install_templates' sub-folder. In the latter cases the repository root is
+# one level up.
+$INSTALL_DIR_NAMES = @('_install', '_install_templates')
 $REPO_ROOT = $PSScriptRoot
-if ((Split-Path -Leaf $PSScriptRoot) -ieq $INSTALL_DIR_NAME) { $REPO_ROOT = Split-Path -Parent $PSScriptRoot }
+if ($INSTALL_DIR_NAMES -contains (Split-Path -Leaf $PSScriptRoot)) { $REPO_ROOT = Split-Path -Parent $PSScriptRoot }
 Set-Location -LiteralPath $REPO_ROOT
 
 # ============================================================

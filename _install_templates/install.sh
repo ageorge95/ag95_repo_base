@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# VERSION=1
+# VERSION=2
 #
 # Generic installer: creates a Python virtual environment for this repository
 # and installs its requirements.
 #
 # Copy this file (together with update.sh and pip.ini) into the root of a
-# repository or into an '_install' folder inside it, and adapt the
-# CONFIGURATION section below. Nothing else should need changing.
+# repository or into an '_install' or '_install_templates' folder inside it,
+# and adapt the CONFIGURATION section below. Nothing else should need changing.
 #
 # Steps:
 #   1. Find the highest installed Python that is not excluded
@@ -28,13 +28,13 @@ set -eo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# The scripts can live in the repository root or in an '_install' sub-folder.
-# In the latter case the repository root is one level up.
-INSTALL_DIR_NAME="_install"
+# The scripts can live in the repository root or in an '_install' or
+# '_install_templates' sub-folder. In the latter cases the repository root is
+# one level up.
 REPO_ROOT="$SCRIPT_DIR"
-if [ "$(basename "$SCRIPT_DIR" | tr '[:upper:]' '[:lower:]')" = "$INSTALL_DIR_NAME" ]; then
-    REPO_ROOT="$(dirname "$SCRIPT_DIR")"
-fi
+case "$(basename "$SCRIPT_DIR" | tr '[:upper:]' '[:lower:]')" in
+    _install|_install_templates) REPO_ROOT="$(dirname "$SCRIPT_DIR")" ;;
+esac
 cd "$REPO_ROOT"
 
 # ============================================================
