@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# VERSION=3
+# VERSION=4
 # https://github.com/ageorge95/ag95_repo_base
 #
 # Generic installer: creates a Python virtual environment for this repository
@@ -13,7 +13,8 @@
 # uv downloads a standalone Python build when no matching interpreter is found.
 #
 # Steps:
-#   1. Find uv (PATH or the uv install folder); install it if missing.
+#   1. Find uv (PATH or the uv install folder); install it if missing,
+#      otherwise update it ('uv self update').
 #   2. Optionally update Git submodules.
 #   3. Optionally create symlinks.
 #   4. (Re)create the virtual environment with 'uv venv' using the requested
@@ -80,8 +81,15 @@ AUTO_INSTALL_UV=true
 # Shell profiles are NOT modified; the scripts also look here.
 UV_INSTALL_DIR="$HOME/.local/bin"
 
-# Official uv installer. Pin a version with e.g. "https://astral.sh/uv/0.9.0/install.sh".
+# Official uv installer. Pin a version with e.g. "https://astral.sh/uv/0.9.0/install.sh"
+# (and set AUTO_UPDATE_UV=false, otherwise the pin is updated away).
 UV_INSTALLER_URL="https://astral.sh/uv/install.sh"
+
+# Set to true to run 'uv self update' every time, so uv (and the list of
+# Python versions it can download) stays current. Only works for uv installed
+# with the official installer (as done by these scripts); for uv installed with
+# pip, Homebrew, a distro package, etc. a warning is shown and the script continues.
+AUTO_UPDATE_UV=true
 
 # Set to true to run 'git submodule update --init --recursive --force'.
 UPDATE_SUBMODULES=false
@@ -126,7 +134,7 @@ while [ $# -gt 0 ]; do
         --python)    PYTHON_ARG="${2:-}"; shift 2 || { echo "ERROR: --python needs a value" >&2; exit 2; } ;;
         --python=*)  PYTHON_ARG="${1#*=}"; shift ;;
         --no-pause)  NO_PAUSE=true; shift ;;
-        -h|--help)   sed -n '4,29p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help)   sed -n '4,30p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *)           echo "ERROR: unknown argument '$1' (see --help)" >&2; exit 2 ;;
     esac
 done
@@ -201,8 +209,20 @@ get_uv() {
         install_uv
         UV="$(find_uv)"
         [ -n "$UV" ] || die "uv was installed but was not found in $UV_INSTALL_DIR."
+    elif [ "$AUTO_UPDATE_UV" = true ]; then
+        update_uv
     fi
     echo "${C_GREEN}Using $("$UV" --version) : $UV${C_OFF}"
+}
+
+# Updates uv to the latest release. A failure (no internet, GitHub rate limit,
+# uv installed by another tool) only produces a warning.
+update_uv() {
+    echo "Updating uv ($("$UV" --version))..."
+    if ! "$UV" self update; then
+        warn "WARNING: could not update uv. Continuing with the current version."
+        warn "If uv was installed with pip, Homebrew, a distro package, etc., update it with that tool."
+    fi
 }
 
 update_submodules() {

@@ -1,4 +1,4 @@
-# VERSION=3
+# VERSION=4
 # https://github.com/ageorge95/ag95_repo_base
 
 <#
@@ -12,7 +12,8 @@
     in sync with install.ps1.
 
     Steps:
-      1. Find uv (PATH or the uv install folder); install it if missing.
+      1. Find uv (PATH or the uv install folder); install it if missing,
+         otherwise update it ('uv self update').
       2. Optionally update Git submodules.
       3. Optionally recreate directory/file links.
       4. Copy pip.ini into the virtual environment, upgrade pip and upgrade
@@ -65,8 +66,15 @@ $AUTO_INSTALL_UV = $true
 # The user PATH is NOT modified; the scripts also look here.
 $UV_INSTALL_DIR = Join-Path $HOME '.local\bin'
 
-# Official uv installer. Pin a version with e.g. 'https://astral.sh/uv/0.9.0/install.ps1'.
+# Official uv installer. Pin a version with e.g. 'https://astral.sh/uv/0.9.0/install.ps1'
+# (and set $AUTO_UPDATE_UV = $false, otherwise the pin is updated away).
 $UV_INSTALLER_URL = 'https://astral.sh/uv/install.ps1'
+
+# Set to $true to run 'uv self update' every time, so uv (and the list of
+# Python versions it can download) stays current. Only works for uv installed
+# with the official installer (as done by these scripts); for uv installed with
+# pip, winget, scoop, etc. a warning is shown and the update continues.
+$AUTO_UPDATE_UV = $true
 
 # Set to $true to run 'git submodule update --init --recursive --force'.
 $UPDATE_SUBMODULES = $false
@@ -203,8 +211,26 @@ function Get-Uv {
         $uv = Join-Path $UV_INSTALL_DIR 'uv.exe'
         if (-not (Test-Path -LiteralPath $uv -PathType Leaf)) { throw "uv was installed but '$uv' was not found." }
     }
+    elseif ($AUTO_UPDATE_UV) {
+        Update-Uv -Uv $uv
+    }
     Write-Host "Using $(& $uv --version) : $uv" -ForegroundColor Green
     return $uv
+}
+
+# Updates uv to the latest release. A failure (no internet, GitHub rate limit,
+# uv installed by another tool) only produces a warning.
+function Update-Uv {
+    param([string]$Uv)
+    Write-Host "Updating uv ($(& $Uv --version))..."
+    try {
+        & $Uv self update | Out-Host
+        if ($LASTEXITCODE -ne 0) { throw "exit code $LASTEXITCODE" }
+    }
+    catch {
+        Write-Host "WARNING: could not update uv ($($_.Exception.Message)). Continuing with the current version." -ForegroundColor Yellow
+        Write-Host 'If uv was installed with pip, winget, scoop, etc., update it with that tool.' -ForegroundColor Yellow
+    }
 }
 
 function Update-Submodules {

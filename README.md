@@ -24,7 +24,9 @@ Package indexes used by the install/update scripts are configured in
 `_install_templates/pip.ini`.
 
 The install/update scripts use [uv](https://docs.astral.sh/uv/). If uv is
-missing, they install it into `~/.local/bin` (PATH is not changed).
+missing, they install it into `~/.local/bin` (PATH is not changed); otherwise
+they update it with `uv self update` (set `AUTO_UPDATE_UV` to `false` to turn
+this off).
 
 The allowed Python versions are set with `PYTHON_VERSION` (default
 `'>=3.10,<3.14'`) in all four scripts; keep the value the same everywhere.
