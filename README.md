@@ -23,6 +23,16 @@ used.
 Package indexes used by the install/update scripts are configured in
 `_install_templates/pip.ini`.
 
+The install/update scripts use [uv](https://docs.astral.sh/uv/). If uv is
+missing, they install it into `~/.local/bin` (PATH is not changed).
+
+The allowed Python versions are set with `PYTHON_VERSION` (default
+`'>=3.10,<3.14'`) in all four scripts; keep the value the same everywhere.
+uv uses a matching Python that is already available. If none matches, uv
+downloads the newest stable version inside the range, so the range's Python
+does **not** have to be installed. `update.ps1` / `update.sh` stop if the
+existing venv's Python is outside the range.
+
 ## Using this repo as a starting point
 
 1. Create a new repository from this one (or copy the files).
@@ -30,6 +40,7 @@ Package indexes used by the install/update scripts are configured in
 3. Install the environment:
    - Windows: `powershell -ExecutionPolicy Bypass -File _install_templates\install.ps1`
    - Linux/macOS: `./_install_templates/install.sh`
+   - Another Python version for one run: `install.ps1 -Python 3.11` / `install.sh --python 3.11`
 4. Start the app with `START.bat` (Windows) or `python main.py`.
 5. Update the environment later with `_install_templates\update.ps1` or
    `_install_templates/update.sh`.
