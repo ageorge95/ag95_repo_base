@@ -17,8 +17,8 @@ used.
 | `requirements.txt` | Python dependencies; also the wheel dependencies |
 | `pyproject.toml` | Packaging metadata used to build the wheel |
 | `main.spec` | PyInstaller one-folder build definition |
-| `BUILD_release.bat` | Builds the executable with PyInstaller |
-| `BUILD_wheels.bat` / `build_wheels.py` | Builds the wheel(s) with uv, optionally uploads them |
+| `BUILD_release.bat` / `BUILD_release.sh` | Builds the executable with PyInstaller (Windows / Linux) |
+| `BUILD_wheels.bat` / `BUILD_wheels.sh` / `build_wheels.py` | Builds the wheel(s) with uv, optionally uploads them (Windows / Linux) |
 | `START.bat` | Runs the app from the local virtual environment |
 | `_install_templates/` | Generic install/update scripts (PowerShell and Bash) |
 
@@ -52,8 +52,14 @@ existing venv's Python is outside the range.
 4. Start the app with `START.bat` (Windows) or `python -m ag95_repo_base.main`.
 5. Update the environment later with `_install_templates\update.ps1` or
    `_install_templates/update.sh`.
-6. Build a release with `BUILD_release.bat`; the output goes to `dist\main\`.
-7. Build the wheel with `BUILD_wheels.bat`; the output goes to `dist\wheels\`.
+6. Build a release with `BUILD_release.bat` (Windows) or `./BUILD_release.sh`
+   (Linux); the output goes to `dist\main\`.
+7. Build the wheel with `BUILD_wheels.bat` (Windows) or `./BUILD_wheels.sh`
+   (Linux); the output goes to `dist\wheels\`.
+
+The Linux scripts activate the virtual environment through `activate.sh`,
+which `install.sh` creates. Run `chmod +x BUILD_*.sh` once, or start them with
+`bash BUILD_release.sh`.
 
 The install scripts work from the repository root or from a folder called
 `_install` or `_install_templates`.
@@ -65,7 +71,7 @@ The install scripts work from the repository root or from a folder called
 PyInstaller output in `dist\main\`. The wheel version is read from
 `ag95_repo_base/version.txt`, its dependencies from `requirements.txt`, and it
 installs an `ag95-repo-base` GUI launcher. Pass `--no-pause` to
-`BUILD_wheels.bat` to skip the final pause (CI).
+`BUILD_wheels.bat` / `BUILD_wheels.sh` to skip the final pause (CI).
 
 uv is found on PATH or in `~/.local/bin` (where the install scripts put it).
 It downloads any Python version it does not find, so the versions to build
