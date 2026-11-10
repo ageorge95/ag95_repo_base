@@ -1,14 +1,16 @@
 # -*- mode: python ; coding: utf-8 -*-
-# VERSION=1
+# VERSION=2
 # https://github.com/ageorge95/ag95_repo_base
+
+PACKAGE = 'ag95_repo_base'  # package folder, rename for a new project
 
 
 a = Analysis(
-    ['main.py'],
+    [f'{PACKAGE}/main.py'],
     pathex=[],
     binaries=[],
-    datas=[('icon.ico', '.'),
-           ('version.txt', '.')],
+    datas=[(f'{PACKAGE}/icon.ico', '.'),
+           (f'{PACKAGE}/version.txt', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,7 +37,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['icon.ico'],
+    icon=[f'{PACKAGE}/icon.ico'],
 )
 coll = COLLECT(
     exe,

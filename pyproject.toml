@@ -1,0 +1,47 @@
+# VERSION=1
+# https://github.com/ageorge95/ag95_repo_base
+#
+# Packaging metadata, used by build_wheels.py / BUILD_wheels.bat.
+# For a new project rename 'ag95_repo_base' everywhere in this file (it must
+# match the package folder) and fill in the description.
+#   - the version comes from ag95_repo_base/version.txt
+#   - the dependencies come from requirements.txt
+#   - requires-python must match PYTHON_VERSION in the install scripts
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ag95_repo_base"
+description = "Base skeleton for my Python GUI repositories."
+readme = "README.md"
+authors = [{ name = "ageorge95" }]
+requires-python = ">=3.10,<=3.15"
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dynamic = ["version", "dependencies"]
+
+[project.urls]
+Homepage = "https://github.com/ageorge95/ag95_repo_base"
+
+# Installs a launcher (ag95-repo-base.exe on Windows) that starts the GUI without a console.
+[project.gui-scripts]
+ag95-repo-base = "ag95_repo_base.main:main"
+
+[tool.setuptools.dynamic]
+version = { file = "ag95_repo_base/version.txt" }
+dependencies = { file = "requirements.txt" }
+
+[tool.setuptools.packages.find]
+include = ["ag95_repo_base*"]
+
+[tool.setuptools.package-data]
+"*" = ["icon.ico", "version.txt"]
